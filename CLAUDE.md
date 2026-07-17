@@ -77,8 +77,8 @@ Schema type and @id pattern **never vary by role/category** — `jobTitle` handl
 - Output format: `<script type="application/ld+json">` blocks
 - Use `@graph` array for all multi-entity pages
 - All schema output should be filterable via WordPress hooks
-- PHP file/class naming conventions: TBD (define before first implementation)
-- ACF field naming convention: TBD (define after ACF Pro 6.8 review)
+- PHP file/class naming conventions: drafted in `.claude/rules/php-conventions.md` (`.docs/CODE_STANDARDS.md` §2 is authoritative) — no class has been implemented yet, so treat as provisional until the first one lands
+- ACF field naming convention: drafted in `.claude/rules/acf-field-model.md` — provisional pending the ACF Pro 6.8 native JSON-LD review (see Open Gaps below)
 
 ## Open Gaps — Do Not Silently Resolve
 Flag these before implementing. Do not pick a default without surfacing the tradeoff:
@@ -105,6 +105,13 @@ Verify from source — do not answer from memory. These are fast-moving/recent t
 - WordPress Abilities API: https://developer.wordpress.org/apis/abilities-api/
 - WP AI Contributor weekly summary (Jul 8 2026): https://make.wordpress.org/ai/2026/07/10/ai-contributor-weekly-summary-8-july-2026/
 
+## Related Documentation
+- `.docs/CODE_STANDARDS.md` — authoritative team coding standard (PHP, JS, SCSS, ACF, security, i18n, file structure, build/lint commands)
+- `.docs/project-scope.md` — full project scope: objectives, page-type taxonomy, three-layer architecture, extension architecture implications
+- `.docs/schema-markup-mapping.md` — detailed per-page-type schema.org property mapping, plus GEO-specific notes
+- `.claude/rules/php-conventions.md` — PHP-specific implementation detail derived from `.docs/CODE_STANDARDS.md` §2 (namespace/class layout, hooks, security, i18n)
+- `.claude/rules/acf-field-model.md` — draft ACF Pro field-group structure per schema layer; provisional pending the ACF Pro 6.8 native JSON-LD review
+
 ## Working Style Preferences
 - Prefer tables/structured references over prose for schema decisions
 - When a new page type or field comes up, classify into the three-layer model before proposing schema
@@ -119,4 +126,4 @@ Verify from source — do not answer from memory. These are fast-moving/recent t
 - [ ] Decide multi-location entity structure
 - [ ] Define how extension flags conditional/inactive templates per client
 - [ ] Define ACF field structure (repeaters/groups) per schema layer
-- [ ] Define PHP file naming and ACF field naming conventions
+- [x] Define PHP file naming and ACF field naming conventions — draft in place (`.claude/rules/php-conventions.md`, `.claude/rules/acf-field-model.md`); revisit after the ACF Pro 6.8 review

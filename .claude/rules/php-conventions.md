@@ -1,5 +1,7 @@
 # PHP Conventions — nanato-schemas
 
+PHP-specific detail derived from `.docs/CODE_STANDARDS.md` §2 — that file is the authoritative team standard (also covers JS, SCSS, ACF, and build tooling); this file exists to give Claude the fuller PHP-specific rationale and examples.
+
 ## 1. General
 - WordPress Coding Standards (WPCS) is the primary base for all PHP code.
 - Minimum WordPress version: match the parent theme's supported version (confirm before first release).
@@ -7,6 +9,8 @@
 - All user-facing strings must be translatable with text domain `nanato-schemas`.
 - Always escape output and sanitize input.
 - Keep files focused on a single responsibility.
+- Keep schema output deterministic and filterable.
+- Treat this repository as a schema architecture/code project, not a content-writing project.
 
 ## 2. Tooling
 | Tool | Config | Command |
@@ -134,6 +138,12 @@ foreach ( $classes as $class ) {
 ```
 
 ## 12. Security
+- Always escape output.
+- Always sanitize input.
+- Protect admin-only operations with capability checks.
+- Use nonces for form submissions and AJAX requests.
+- Use prepared queries (`$wpdb->prepare()`) for custom SQL; never build SQL strings from raw input.
+
 ### Escaping Output
 | Context | Function |
 |---------|---------|
@@ -161,6 +171,19 @@ Protect admin-only functionality such as options-page updates:
 ```php
 if ( ! current_user_can( 'manage_options' ) ) {
     return;
+}
+```
+
+### Nonces
+Use nonces for any form submission or AJAX request this plugin adds (e.g. an options-page save handler):
+
+```php
+// Create
+wp_create_nonce( 'nanato_schemas_action' );
+
+// Verify
+if ( ! wp_verify_nonce( $_POST['nonce'], 'nanato_schemas_action' ) ) {
+    wp_die( 'Security check failed.' );
 }
 ```
 
