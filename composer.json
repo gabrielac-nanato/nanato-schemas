@@ -1,0 +1,29 @@
+{
+	"name": "gaby1/nanato-schemas",
+	"description": "A WordPress plugin that allows you to add schema.org microdata to your website using ACF fields.",
+	"type": "wordpress-plugin",
+	"license": "MIT",
+	"autoload": {
+		"psr-4": {
+			"Nanato_Schemas\\": "classes/"
+		}
+	},
+	"authors": [
+		{
+			"name": "Gabriela Carral",
+			"email": "304633181+gabrielac-nanato@users.noreply.github.com"
+		}
+	],
+	"require-dev": {
+		"wp-coding-standards/wpcs": "^3.1"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"scripts": {
+		"format": "phpcbf --standard=phpcs.xml.dist --report-summary --report-source || true",
+		"lint": "phpcs --standard=phpcs.xml.dist"
+	}
+}

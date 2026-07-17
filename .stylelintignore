@@ -1,0 +1,6 @@
+build/
+node_modules/
+vendor/
+*.min.css
+*.min.scss
+dist/
