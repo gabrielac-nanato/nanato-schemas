@@ -1,31 +1,187 @@
 # PHP Conventions — nanato-schemas
 
-## Standard & tooling
-- WordPress Coding Standards (WPCS) via `phpcs`/`phpcbf` (`composer run lint` / `composer run format`), configured in `phpcs.xml.dist`.
-- 4-space indentation (not tabs), matching the org-wide convention — this differs from WPCS's default tab preference; keep `phpcs.xml.dist` explicit about the exception when it's written.
-- Short array syntax (`[]`, not `array()`).
-- Non-Yoda conditions (`$value === true`, not `true === $value`).
-- English-only identifiers: variables, functions, classes, constants, comments.
+## 1. General
+- WordPress Coding Standards (WPCS) is the primary base for all PHP code.
+- Minimum WordPress version: match the parent theme's supported version (confirm before first release).
+- Minimum PHP version: 7.4.
+- All user-facing strings must be translatable with text domain `nanato-schemas`.
+- Always escape output and sanitize input.
+- Keep files focused on a single responsibility.
 
-## Autoloading & file layout
-- Composer PSR-4: `Nanato_Schemas\` → `classes/` (see `composer.json`).
-- PSR-4 requires the file name to match the class name exactly — this overrides WordPress's traditional `class-my-thing.php` file-naming convention, since the two are incompatible. One file per class.
-- Class names: `Studly_Case_With_Underscores` (e.g. `Schema_Builder`, `Organization_Schema`, `Acf_Field_Map`), matching file `classes/Schema_Builder.php`.
-- Namespace classes by schema layer where it clarifies intent, e.g. `Nanato_Schemas\Global_Layer`, `Nanato_Schemas\Page_Layer`, `Nanato_Schemas\Components` — don't force a namespace split before a second class in that layer actually exists.
-- Plain functions (hooks, helpers not tied to a class) stay in procedural includes under `inc/`, auto-loaded via `glob()` from the main plugin file — same pattern as the parent theme's `functions.php`. Function names: `nanato_schemas_snake_case()`.
-- Constants: `NANATO_SCHEMAS_SNAKE_CASE`.
+## 2. Tooling
+| Tool | Config | Command |
+|------|--------|---------|
+| PHP_CodeSniffer (PHPCS) | `phpcs.xml.dist` | `composer run lint` |
+| PHP Code Beautifier (PHPCBF) | `phpcs.xml.dist` | `composer run format` |
 
-## WordPress integration
-- Prefix all hooks, options, transients, and meta keys with `nanato_schemas_`.
-- All filterable: every JSON-LD fragment/graph node the plugin outputs must run through a corresponding `apply_filters( 'nanato_schemas_...', ... )` before output (per the project's "all schema output should be filterable" convention in `CLAUDE.md`).
-- Escape/sanitize per WPCS at the point of output — `esc_html`, `esc_url`, `esc_attr`, `wp_kses_post`, `absint`, etc. JSON-LD blocks are built as PHP arrays and passed through `wp_json_encode()` at the very end, not string-concatenated.
-- Validate ACF field data defensively where a required field can plausibly be empty — return early (no output) rather than emitting incomplete/invalid JSON-LD. Prefer an HTML comment noting what's missing over a fatal error, matching the parent theme's section-partial pattern.
+Ruleset and formatting:
+- Use WPCS v3.1+.
+- Use text domain `nanato-schemas`.
 
-## Style
-- No premature abstraction: don't introduce an interface, factory, or base class until there are at least two concrete implementations that need it.
-- No defensive error handling for conditions that can't occur (e.g. don't null-check a value ACF guarantees is set when the field group is present) — validate only at real boundaries (ACF field values, external API responses).
-- Docblocks: one-line `@param`/`@return` blocks on public class methods and hook callbacks; skip docblocks on obvious private helpers where the signature is self-explanatory. No `@since` tags.
-- No comments explaining *what* the code does — only *why*, when a decision is non-obvious (e.g. why a given schema.org approximation was chosen over another, referencing the relevant Open Gap in `CLAUDE.md`).
+## 3. Namespace
+All classes use the `Nanato_Schemas` namespace (PSR-4 mapped to `classes/` in `composer.json`).
 
-## Status
-This is a first draft — revisit once the first class actually lands (`Nanato_Schemas\` autoload root and `classes/` directory don't exist yet). Treat naming and layer-namespacing as provisional until then.
+```php
+namespace Nanato_Schemas;
+```
+
+Add sub-namespaces by schema layer once needed:
+
+```php
+namespace Nanato_Schemas\Page_Layer;
+```
+
+Place `use` statements after the namespace declaration.
+
+## 4. File Header
+Every PHP file starts with a file-level DocBlock and an `ABSPATH` guard:
+
+```php
+<?php
+/**
+ * Short description of the file.
+ *
+ * @package Nanato_Schemas
+ */
+
+namespace Nanato_Schemas;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+```
+
+## 5. Class Structure
+- One class per file.
+- File name matches class name exactly (PSR-4), for example `Schema_Builder` in `classes/Schema_Builder.php`.
+- Class names use `Studly_Case_With_Underscores`, for example `Schema_Builder`, `Organization_Schema`, `ACF_Field_Map`.
+- Register hooks in `__construct()` or in private `register_hooks()` called from `__construct()`.
+- Use `array( $this, 'method_name' )` for hook callbacks.
+- Set explicit priority and accepted argument count when they differ from defaults.
+
+```php
+class Organization_Schema {
+    public function __construct() {
+        $this->register_hooks();
+    }
+
+    private function register_hooks() {
+        add_filter( 'nanato_schemas_graph', array( $this, 'add_organization_node' ) );
+    }
+}
+```
+
+## 6. Method DocBlocks
+Public methods include DocBlocks with description, `@param`, and `@return` tags.
+
+```php
+/**
+ * Add the Organization node to the JSON-LD graph.
+ *
+ * @param array $graph Existing @graph nodes.
+ * @return array Modified @graph nodes.
+ */
+public function add_organization_node( $graph ) { ... }
+```
+
+Skip DocBlocks on obvious private helpers when the signature is already clear.
+
+## 7. Hooks And Filters
+- Use `add_action()` and `add_filter()` for registration.
+- Group related hook registrations with a short comment.
+- Pass every JSON-LD fragment or graph node through a matching `apply_filters( 'nanato_schemas_...', ... )` before output.
+- Prefix hooks, options, transients, and meta keys with `nanato_schemas_`.
+
+## 8. Indentation And Spacing
+- Use tabs for indentation.
+- Use one space inside control-structure parentheses: `if ( $condition ) {`.
+- Do not leave trailing whitespace.
+- Keep opening braces on the same line for classes and functions.
+
+## 9. Arrays
+Follow WPCS array formatting rules.
+
+```php
+$assoc = array(
+    'key'   => 'value',
+    'other' => 'value',
+);
+```
+
+Build JSON-LD graphs as PHP arrays and encode with `wp_json_encode()` at output time.
+
+## 10. Static Utility Classes
+Use static methods only for stateless helpers, such as path, URL, and prefix utilities.
+
+```php
+Plugin_Paths::plugin_path();
+Plugin_Paths::plugin_url();
+Plugin_Paths::plugin_prefix();
+```
+
+## 11. Instantiating Classes
+Instantiate classes in the main plugin file from a flat class list:
+
+```php
+$classes = [
+    \Nanato_Schemas\Organization_Schema::class,
+    \Nanato_Schemas\Breadcrumb_Schema::class,
+];
+
+foreach ( $classes as $class ) {
+    new $class();
+}
+```
+
+## 12. Security
+### Escaping Output
+| Context | Function |
+|---------|---------|
+| HTML content | `wp_kses_post()` |
+| HTML attribute | `esc_attr()` |
+| URL | `esc_url()` |
+| Plain text | `esc_html()` |
+| JSON or inline data | `wp_json_encode()` |
+
+Never echo raw variables into HTML.
+
+### Sanitizing Input (ACF field values and options)
+| Input type | Function |
+|------------|---------|
+| Text field | `sanitize_text_field()` |
+| Textarea | `sanitize_textarea_field()` |
+| Email | `sanitize_email()` |
+| URL | `esc_url_raw()` |
+| Integer | `absint()` or `intval()` |
+| HTML content | `wp_kses_post()` |
+
+### Capability Checks
+Protect admin-only functionality such as options-page updates:
+
+```php
+if ( ! current_user_can( 'manage_options' ) ) {
+    return;
+}
+```
+
+### Defensive Validation
+Validate required ACF field data before rendering schema output. If required data is missing, return early instead of outputting incomplete JSON-LD.
+
+## 13. Internationalization
+- Use text domain `nanato-schemas`.
+- Wrap user-facing strings with translation functions such as `__()` and `esc_html__()`.
+- Use `sprintf()` with placeholders for translatable strings instead of string concatenation.
+
+## 14. File And Directory Structure
+```
+nanato-schemas/
+├── classes/         # PHP classes (PSR-4 namespace Nanato_Schemas)
+├── inc/             # Procedural includes/helpers
+├── src/             # JS/SCSS source (admin, editor, frontend)
+├── acf-json/        # ACF Local JSON (auto-generated, do not hand-edit)
+├── build/           # Webpack output (gitignored)
+└── .docs/           # Developer and architecture documentation
+```
+
+- Keep business logic out of templates.
+- Put plain helper functions in `inc/helpers.php` and prefix with `nanato_schemas_`.

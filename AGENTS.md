@@ -9,6 +9,7 @@
 - Architecture and open decisions: [CLAUDE.md](CLAUDE.md)
 - Scope and product framing: [.docs/project-scope.md](.docs/project-scope.md)
 - Page-type schema mapping: [.docs/schema-markup-mapping.md](.docs/schema-markup-mapping.md)
+- Project coding standards: [.docs/CODE_STANDARDS.md](.docs/CODE_STANDARDS.md)
 - ACF model draft and OPEN items: [.claude/rules/acf-field-model.md](.claude/rules/acf-field-model.md)
 - PHP conventions: [.claude/rules/php-conventions.md](.claude/rules/php-conventions.md)
 
@@ -19,11 +20,8 @@
 - Keep all schema output filterable via `nanato_schemas_*` WordPress hooks.
 
 ## Coding Conventions
-- PHP style follows [.claude/rules/php-conventions.md](.claude/rules/php-conventions.md):
-  - 4-space indentation
-  - short arrays (`[]`)
-  - non-Yoda conditions
-  - English-only identifiers and comments
+- Project conventions are defined in [.docs/CODE_STANDARDS.md](.docs/CODE_STANDARDS.md).
+- PHP-specific rules are defined in [.claude/rules/php-conventions.md](.claude/rules/php-conventions.md).
 - Autoloading is PSR-4: `Nanato_Schemas\\` -> `classes/` (see [composer.json](composer.json)).
 - Build JSON-LD as PHP arrays and output via `wp_json_encode()`.
 
