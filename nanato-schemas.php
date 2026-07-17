@@ -31,7 +31,7 @@ add_action(
 if ( file_exists( plugin_dir_path( __FILE__ ) . 'vendor/autoload.php' ) ) {
 	require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 } else {
-	// Fallback: manually include the classes
+	// Fallback: manually include the classes.
 	require_once plugin_dir_path( __FILE__ ) . 'classes/Plugin_Definitions.php';
 	require_once plugin_dir_path( __FILE__ ) . 'classes/Plugin_Paths.php';
 	require_once plugin_dir_path( __FILE__ ) . 'classes/ACF_Settings.php';
@@ -40,7 +40,7 @@ if ( file_exists( plugin_dir_path( __FILE__ ) . 'vendor/autoload.php' ) ) {
 }
 
 // Include helper functions.
-// require_once plugin_dir_path( __FILE__ ) . 'helpers/helpers.php';
+require_once plugin_dir_path( __FILE__ ) . 'helpers/helpers.php';
 
 // Instantiate the classes.
 $nanato_schemas_classes = array(
@@ -51,7 +51,7 @@ $nanato_schemas_classes = array(
 	\Nanato_Schemas\Admin::class,
 );
 
-// Instantiate each class
+// Instantiate each class.
 foreach ( $nanato_schemas_classes as $nanato_schemas_class ) {
 	new $nanato_schemas_class();
 }

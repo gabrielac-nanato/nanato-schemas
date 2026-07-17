@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile WordPress.Files.FileName.NotHyphenatedLowercase,WordPress.Files.FileName.InvalidClassFileName
 /**
  * Plugin Paths Class
  *
@@ -7,10 +8,10 @@
  * @package Nanato_Schemas
  */
 
-// Define the namespace
+// Define the namespace.
 namespace Nanato_Schemas;
 
-// Exit if accessed directly
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

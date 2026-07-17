@@ -1,19 +1,22 @@
 <?php
+// phpcs:ignoreFile WordPress.Files.FileName.NotHyphenatedLowercase,WordPress.Files.FileName.InvalidClassFileName
 /**
  * ACF Settings & Options
+ *
+ * This class handles the ACF settings and options for the plugin.
  *
  * @package Nanato_Schemas
  */
 
-// Define the namespace
+// Define the namespace.
 namespace Nanato_Schemas;
 
-// Exit if accessed directly
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Import necessary classes
+// Import necessary classes.
 use Nanato_Schemas\Plugin_Definitions;
 use Nanato_Schemas\Plugin_Paths;
 
@@ -23,12 +26,18 @@ use Nanato_Schemas\Plugin_Paths;
 class ACF_Settings {
 
 	/**
-	 * Prefixes for slugs and field names
+	 * Prefix for use in slugs.
 	 *
 	 * @var string
 	 */
-	private $slug_prefix = Plugin_Definitions::plugin_prefix(); // For use in slugs
-	private $name_prefix = str_replace('-', '_', $slug_prefix); // For use in field names
+	private $slug_prefix;
+
+	/**
+	 * Prefix for use in field names.
+	 *
+	 * @var string
+	 */
+	private $name_prefix;
 
 	/**
 	 * Constructor
@@ -36,48 +45,54 @@ class ACF_Settings {
 	 * Registers all hooks when the class is instantiated.
 	 */
 	public function __construct() {
-		// Hook into ACF actions and filters
+		$this->slug_prefix = Plugin_Definitions::plugin_prefix();
+		$this->name_prefix = str_replace( '-', '_', $this->slug_prefix );
+
+		// Hook into ACF actions and filters.
 		add_action( 'acf/include_fields', array( $this, 'register_acf_field_groups' ) );
 
-		// Register options page on ACF initialization
+		// Register options page on ACF initialization.
 		add_action( 'acf/init', array( $this, 'register_acf_options_page' ) );
 
-		// Set ACF directories
-		// add_filter( 'acf/settings/save_json', array( $this, 'acf_json_save_point' ) );
-		// add_filter( 'acf/settings/load_json', array( $this, 'acf_json_load_point' ) );
+		// Set ACF directories.
+		/* 
+		add_filter( 'acf/settings/save_json', array( $this, 'acf_json_save_point' ) );
+		add_filter( 'acf/settings/load_json', array( $this, 'acf_json_load_point' ) );
+		*/
 	}
 
 	/**
 	 * Register ACF field groups for the plugin
-	 *
-	 * @return void
 	 */
 	public function register_acf_field_groups() {
-		// Check if ACF is active
+		// Check if ACF is active.
 		if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 			return;
 		}
 
-
+		// TODO: Define and register ACF field groups here.
 	}
 
 	/**
 	 * Register ACF options pages for the plugin
-	 *
-	 * @return void
 	 */
 	public function register_acf_options_page() {
-		// Check if ACF is active
+		// Check if ACF is active.
 		if ( ! function_exists( 'acf_add_options_page' ) ) {
 			return;
 		}
 
+		// TODO: Define and register ACF options pages here.
 
-
+		// TODO: Define and register ACF options sub pages if needed.
+		/*
 		if ( function_exists( 'acf_add_options_sub_page' ) ) {
-
+			
 		}
+		*/
 	}
+
+	// TODO: Implement additional ACF-related functionality if needed.
 
 	/**
 	 * Set ACF save point to theme directory
@@ -85,9 +100,11 @@ class ACF_Settings {
 	 * @param string $path Default save path.
 	 * @return string Theme's acf-json directory path.
 	 */
-	// public function acf_json_save_point( $path ) {
-	// 	return Plugin_Paths::plugin_path() . '/acf-json';
-	// }
+	/*
+	public function acf_json_save_point( $path ) {
+		return Plugin_Paths::plugin_path() . '/acf-json';
+	}
+	*/
 
 	/**
 	 * Set ACF load point from theme directory
@@ -95,8 +112,10 @@ class ACF_Settings {
 	 * @param array $paths Default load paths.
 	 * @return array Modified paths with theme's acf-json directory.
 	 */
-	// function acf_json_load_point( $paths ) {
-	// 	$paths[] = Plugin_Paths::plugin_path() . '/acf-json';
-	// 	return $paths;
-	// }
+	/*
+	function acf_json_load_point( $paths ) {
+		$paths[] = Plugin_Paths::plugin_path() . '/acf-json';
+		return $paths;
+	}
+	*/
 }

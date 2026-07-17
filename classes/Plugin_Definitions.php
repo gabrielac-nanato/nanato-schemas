@@ -1,14 +1,15 @@
 <?php
+// phpcs:ignoreFile WordPress.Files.FileName.NotHyphenatedLowercase,WordPress.Files.FileName.InvalidClassFileName
 /**
  * Plugin Definitions
  *
  * @package Nanato_Schemas
  */
 
-// Define the namespace
+// Define the namespace.
 namespace Nanato_Schemas;
 
-// Exit if accessed directly
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -26,4 +27,6 @@ class Plugin_Definitions {
 	public static function plugin_prefix() {
 		return 'nanato-schemas';
 	}
+
+	// TODO: Implement additional plugin definitions if needed.
 }
