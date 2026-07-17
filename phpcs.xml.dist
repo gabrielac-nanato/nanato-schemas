@@ -1,52 +1,58 @@
 <?xml version="1.0"?>
 <ruleset name="WordPress Coding Standards">
-    <description>WordPress Coding Standards for HTML and PHP files in the project.</description>
+	<description>A custom set of code standard rules to check for WordPress projects.</description>
 
-    <!-- What to scan -->
-    <file>.</file>
-    <exclude-pattern>/vendor/</exclude-pattern>
-	<exclude-pattern>/node_modules/</exclude-pattern>
-	<exclude-pattern>/assets/</exclude-pattern>
-	<exclude-pattern>/build/</exclude-pattern>
-	<exclude-pattern>/dist/</exclude-pattern>
-	<exclude-pattern>/src/</exclude-pattern>
-	<exclude-pattern>/acf-json/</exclude-pattern>
+	<!-- What to scan -->
+	<file>.</file>
+	<exclude-pattern>/vendor/*</exclude-pattern>
+	<exclude-pattern>/node_modules/*</exclude-pattern>
+	<exclude-pattern>/dist/*</exclude-pattern>
+	<exclude-pattern>/assets/*</exclude-pattern>
+	<exclude-pattern>*.asset.php</exclude-pattern>
+	<exclude-pattern>*.js</exclude-pattern>
+	<exclude-pattern>*.scss</exclude-pattern>
+	<exclude-pattern>*.css</exclude-pattern>
+	<exclude-pattern>*.json</exclude-pattern>
+	<exclude-pattern>*.md</exclude-pattern>
 
 	<!-- How to scan -->
-	<arg value="sp"/>
-	<arg name="basepath" value="."/>
+	<arg value="sp" />
+	<arg name="basepath" value="." />
 	<arg name="colors" />
-	<arg name="extensions" value="php"/>
-	<arg name="parallel" value="8"/>
+	<arg name="extensions" value="php" />
+	<arg name="parallel" value="8" />
 
 	<!-- Rules: WordPress Coding Standards -->
-	<config name="minimum_supported_wp_version" value="6.6"/>
-
 	<rule ref="WordPress">
-		<exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
-		<exclude name="Generic.Functions.CallTimePassByReference"/>
-		<exclude name="WordPress.PHP.YodaConditions.NotYoda"/>
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax" />
+		<exclude name="Generic.Functions.CallTimePassByReference" />
+		<exclude name="WordPress.PHP.YodaConditions.NotYoda" />
 	</rule>
 
 	<rule ref="WordPress.Arrays.MultipleStatementAlignment">
 		<properties>
-			<property name="maxColumn" value="80"/>
-		</properties>
-	</rule>
-
-	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
-		<properties>
-			<property name="prefixes" type="array">
-				<element value="Nanato_Schemas"/>
-			</property>
+			<property name="exact" value="false"/>
+			<property name="alignMultilineItems" value="!=100"/>
+			<property name="ignoreNewlines" value="false"/>
+			<property name="maxColumn" value="88" />
 		</properties>
 	</rule>
 
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="nanato-schemas"/>
+				<element value="nanato-schemas" />
 			</property>
 		</properties>
 	</rule>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="Nanato_Schemas" />
+			</property>
+		</properties>
+	</rule>
+
+	<config name="minimum_supported_wp_version" value="7.0" />
 </ruleset>
